@@ -1,28 +1,20 @@
 
 let roundNumber = 0;
-let userWins = 0;
-let winLog = [];
+let playerWins = 0;
+let computerWins = 0;
 
-game();
+const scoreDiv = document.querySelector('#total-score');
+const playerScoreDiv = document.querySelector('#player-score');
+const computerScoreDiv = document.querySelector('#computer-score');
+const rockButton = document.querySelector('#rock-image');
+const paperButton = document.querySelector('#paper-image');
+const scissorsButton = document.querySelector('#scissors-image');
 
-function game(){
-    for(let i = 0; i < 5; i++){
-        roundNumber++;
-        winLog[roundNumber] = 0;
-        singleRound();
-    }
-    let outText = endGameTextGenerator();
-    console.log(outText);
-}
 
-function singleRound(textAdd = ""){
-    let compChoice = getComputerChoice();
-    let playerChoice = prompt(textAdd + `Please input rock, paper, or scissors.\nRound ${roundNumber}`);
-    playRound(playerChoice, compChoice);
-}
+updateScore();
 
 function getComputerChoice(){
-    let randomInt = intervalRandomizer(1, 3);
+    let randomInt = pickRandomIntegerFromInterval(1, 3);
     if(randomInt == 1){
         return "rock";
     } else if(randomInt == 2){
@@ -32,7 +24,7 @@ function getComputerChoice(){
     }
 }
 
-function intervalRandomizer(min, max){
+function pickRandomIntegerFromInterval(min, max){
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
@@ -41,47 +33,53 @@ function playRound(playerSelection, computerSelection){
     computerSelection = computerSelection.toLowerCase();
 
     if(playerSelection == "Rock"){
-        return playerRock(computerSelection);
+        return playerChoseRock(computerSelection);
     } else if(playerSelection == "Paper"){
-        return playerPaper(computerSelection);
+        return playerChosePaper(computerSelection);
     }
-    return playerScissors(computerSelection);
+    return playerChoseScissors(computerSelection);
 }
 
-function playerRock(computerSelection){
+function playerChoseRock(computerSelection){
     if(computerSelection == "scissors"){
-        userWins++;
-        winLog[roundNumber] = 1;
+        playerWins++;
+        updateScore();
         return "You Win! Rock beats Scissors";
     } 
     if(computerSelection == "paper"){
+        computerWins++;
+        updateScore();
         return "You Lose! Paper beats Rock";
     } 
-    return singleRound("You Tied! Please play another round\n");
+    return "You Tied! Please play another round\n";
 }
 
-function playerPaper(computerSelection){
+function playerChosePaper(computerSelection){
     if(computerSelection == "scissors"){
+        computerWins++;
+        updateScore();
         return "You Lose! Scissors beats Paper";
     } 
     if(computerSelection == "rock"){
-        userWins++;
-        winLog[roundNumber] = 1;
+        playerWins++;
+        updateScore();
         return "You Win! Paper beats Rock";
     } 
-    return singleRound("You Tied! Please play another round\n");
+    return "You Tied! Please play another round\n";
 }
 
-function playerScissors(computerSelection){
+function playerChoseScissors(computerSelection){
     if(computerSelection == "rock"){
+        computerWins++;
+        updateScore();
         return "You Lose! Rock beats Scissors";
     } 
     if(computerSelection == "paper"){
-        userWins++;
-        winLog[roundNumber] = 1;
+        playerWins++;
+        updateScore();
         return "You Win! Scissors beats Paper";
     } 
-    return singleRound("You Tied! Please play another round\n");
+    return "You Tied! Please play another round\n";
 }
 
 function endGameTextGenerator(){
@@ -100,4 +98,28 @@ function endGameTextGenerator(){
     }
     returnString += `Final score: \nUser: ${userWins}\nMachines: ` + (5 - userWins);
     return returnString;
+}
+
+
+rockButton.addEventListener('click', function(event) {
+    const compChoice = getComputerChoice();
+    alert(playerChoseRock(compChoice));
+});
+
+paperButton.addEventListener('click', function(event) {
+    const compChoice = getComputerChoice();
+    alert(playerChosePaper(compChoice));
+});
+
+scissorsButton.addEventListener('click', function(event) {
+    const compChoice = getComputerChoice();
+    alert(playerChoseScissors(compChoice));
+});
+
+function updateScore(){
+    //const newScore = `${playerWins} : ${computerWins}`;
+
+    //scoreDiv.textContent = newScore;
+    playerScoreDiv.textContent = `${playerWins}`;
+    computerScoreDiv.textContent = `${computerWins}`;
 }
