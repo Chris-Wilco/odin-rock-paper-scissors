@@ -3,13 +3,14 @@ let roundNumber = 0;
 let playerWins = 0;
 let computerWins = 0;
 
-const scoreDiv = document.querySelector('#total-score');
+const scoreDiv = document.querySelector('#score-display');
 const playerScoreDiv = document.querySelector('#player-score');
 const computerScoreDiv = document.querySelector('#computer-score');
 const rockButton = document.querySelector('#rock-image');
 const paperButton = document.querySelector('#paper-image');
 const scissorsButton = document.querySelector('#scissors-image');
-
+const infoBox = document.querySelector('#info-box');
+const scoreResetButton = document.querySelector('#reset-score');
 
 updateScore();
 
@@ -28,58 +29,49 @@ function pickRandomIntegerFromInterval(min, max){
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-function playRound(playerSelection, computerSelection){
-    playerSelection = playerSelection.toLowerCase();
-    computerSelection = computerSelection.toLowerCase();
-
-    if(playerSelection == "Rock"){
-        return playerChoseRock(computerSelection);
-    } else if(playerSelection == "Paper"){
-        return playerChosePaper(computerSelection);
-    }
-    return playerChoseScissors(computerSelection);
-}
-
 function playerChoseRock(computerSelection){
     if(computerSelection == "scissors"){
         playerWins++;
         updateScore();
-        return "You Win! Rock beats Scissors";
-    } 
-    if(computerSelection == "paper"){
+        updateInfoBoxText("You Win! Rock beats Scissors");
+    } else if(computerSelection == "paper"){
         computerWins++;
         updateScore();
-        return "You Lose! Paper beats Rock";
-    } 
-    return "You Tied! Please play another round\n";
+        updateInfoBoxText("You Lose! Paper beats Rock");
+    } else {
+        updateInfoBoxText("You Tied! Please play another round");
+    }
+    bestOfFiveWinner();
 }
 
 function playerChosePaper(computerSelection){
     if(computerSelection == "scissors"){
         computerWins++;
         updateScore();
-        return "You Lose! Scissors beats Paper";
-    } 
-    if(computerSelection == "rock"){
+        updateInfoBoxText("You Lose! Scissors beats Paper");
+    } else if(computerSelection == "rock"){
         playerWins++;
         updateScore();
-        return "You Win! Paper beats Rock";
-    } 
-    return "You Tied! Please play another round\n";
+        updateInfoBoxText("You Win! Paper beats Rock");
+    } else {
+        updateInfoBoxText("You Tied! Please play another round");
+    }
+    bestOfFiveWinner();
 }
 
 function playerChoseScissors(computerSelection){
     if(computerSelection == "rock"){
         computerWins++;
         updateScore();
-        return "You Lose! Rock beats Scissors";
-    } 
-    if(computerSelection == "paper"){
+        updateInfoBoxText("You Lose! Rock beats Scissors");
+    } else if(computerSelection == "paper"){
         playerWins++;
         updateScore();
-        return "You Win! Scissors beats Paper";
-    } 
-    return "You Tied! Please play another round\n";
+        updateInfoBoxText("You Win! Scissors beats Paper");
+    } else {
+        updateInfoBoxText("You Tied! Please play another round");
+    }
+    bestOfFiveWinner();
 }
 
 function endGameTextGenerator(){
@@ -103,23 +95,46 @@ function endGameTextGenerator(){
 
 rockButton.addEventListener('click', function(event) {
     const compChoice = getComputerChoice();
-    alert(playerChoseRock(compChoice));
+    playerChoseRock(compChoice);
 });
 
 paperButton.addEventListener('click', function(event) {
     const compChoice = getComputerChoice();
-    alert(playerChosePaper(compChoice));
+    playerChosePaper(compChoice);
 });
 
 scissorsButton.addEventListener('click', function(event) {
     const compChoice = getComputerChoice();
-    alert(playerChoseScissors(compChoice));
+    playerChoseScissors(compChoice);
 });
 
 function updateScore(){
-    //const newScore = `${playerWins} : ${computerWins}`;
-
-    //scoreDiv.textContent = newScore;
     playerScoreDiv.textContent = `${playerWins}`;
     computerScoreDiv.textContent = `${computerWins}`;
+}
+
+function updateInfoBoxText(newText){
+    let someNewText = newText;
+    infoBox.textContent = someNewText;
+}
+
+function clearInfoBoxText(){
+    infoBox.textContent = '';
+}
+
+function resetScore(){
+    playerWins = 0;
+    computerWins = 0;
+    updateScore();
+    clearInfoBoxText();
+}
+
+scoreResetButton.addEventListener('click', resetScore);
+
+function bestOfFiveWinner(){
+    if(playerWins >= 5){
+        updateInfoBoxText('You have won five games! All hail the victor');
+    } else if(computerWins >= 5){
+        updateInfoBoxText('Oh no! The machines have won!');
+    }
 }
